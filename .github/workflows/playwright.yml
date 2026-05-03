@@ -21,13 +21,13 @@ jobs:
 
       # 1. Check out the code
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4.2.2
 
-      # 2. Set up Node.js
+      # 2. Set up Node.js 24 (replaces deprecated Node.js 20)
       - name: Set up Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v4.4.0
         with:
-          node-version: '20'
+          node-version: '24'
           cache: 'npm'
 
       # 3. Install npm dependencies
@@ -54,7 +54,7 @@ jobs:
 
       # 7. Upload Playwright HTML report as artifact
       - name: Upload Playwright report
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v4.6.2
         if: always()   # upload even if tests fail
         with:
           name: playwright-report
@@ -63,7 +63,7 @@ jobs:
 
       # 8. Upload self-healing JSON report as artifact
       - name: Upload self-healing report
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v4.6.2
         if: always()
         with:
           name: self-healing-report
