@@ -1,0 +1,71 @@
+name: Playwright Tests
+
+# ── Triggers ─────────────────────────────────────────────────────────────────
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+  # Allow manual trigger from GitHub Actions tab
+  workflow_dispatch:
+
+# ── Jobs ─────────────────────────────────────────────────────────────────────
+jobs:
+  test:
+    name: Run Playwright Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+
+      # 1. Check out the code
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2. Set up Node.js
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      # 3. Install npm dependencies
+      - name: Install dependencies
+        run: npm ci
+
+      # 4. Install Playwright browsers (Chromium only)
+      - name: Install Playwright browsers
+        run: npx playwright install chromium --with-deps
+
+      # 5. Run regular E2E tests (no AI needed)
+      - name: Run E2E tests
+        run: npx playwright test tests/demoblaze.spec.js tests/signup_scroll.spec.js
+        env:
+          CI: true
+
+      # 6. Run AI self-healing tests (uses Groq instead of Ollama)
+      - name: Run self-healing tests
+        run: npx playwright test tests/selfHealing.spec.js tests/stressHealing.spec.js
+        env:
+          CI: true
+          AI_PROVIDER: groq
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+
+      # 7. Upload Playwright HTML report as artifact
+      - name: Upload Playwright report
+        uses: actions/upload-artifact@v4
+        if: always()   # upload even if tests fail
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 14
+
+      # 8. Upload self-healing JSON report as artifact
+      - name: Upload self-healing report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: self-healing-report
+          path: reports/test-report.json
+          retention-days: 14

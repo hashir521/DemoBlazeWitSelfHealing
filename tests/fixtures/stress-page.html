@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Self-Healing Stress Test Page</title>
+  <style>
+    body { font-family: sans-serif; padding: 2rem; }
+    .hidden-btn  { display: none; }
+    .section     { margin: 2rem 0; padding: 1rem; border: 1px solid #ccc; border-radius: 6px; }
+    button, input { margin: 0.25rem; padding: 0.5rem 1rem; cursor: pointer; }
+    #delayed-btn { display: none; }
+    #duplicate-target { background: green; color: white; }
+  </style>
+</head>
+<body>
+
+  <!-- S1: Multiple matching elements — three buttons share the same class -->
+  <div class="section" id="s1-multiple">
+    <h3>S1 — Multiple Matching Elements</h3>
+    <button class="action-btn" id="action-secondary">Secondary</button>
+    <button class="action-btn" data-test="primary-action" id="action-primary">Primary Action</button>
+    <button class="action-btn" id="action-tertiary">Tertiary</button>
+  </div>
+
+  <!-- S2: Hidden element — button exists in DOM but display:none -->
+  <div class="section" id="s2-hidden">
+    <h3>S2 — Hidden Element</h3>
+    <button class="hidden-btn" data-test="hidden-submit" id="hidden-submit">Hidden Submit</button>
+    <button data-test="visible-submit" id="visible-submit">Visible Submit</button>
+  </div>
+
+  <!-- S3: Delayed rendering — button injected after 2 s -->
+  <div class="section" id="s3-delayed">
+    <h3>S3 — Delayed Rendering</h3>
+    <span id="delayed-placeholder">Loading…</span>
+    <button id="delayed-btn" data-test="delayed-action">Delayed Action</button>
+  </div>
+
+  <!-- S4: Dynamic ID — ID contains a random suffix -->
+  <div class="section" id="s4-dynamic">
+    <h3>S4 — Dynamic ID</h3>
+    <button data-test="confirm-order" id="confirm-btn-a1b2c3">Confirm Order</button>
+  </div>
+
+  <!-- S5: Wrong element type — locator targets input but action needs button -->
+  <div class="section" id="s5-wrong-type">
+    <h3>S5 — Wrong Element Type</h3>
+    <input type="text" data-test="search-input" id="search-input" placeholder="Search…" />
+    <button data-test="search-submit" id="search-submit">Search</button>
+  </div>
+
+  <!-- S6: Nested DOM — button buried inside div > article > section > button -->
+  <div class="section" id="s6-nested">
+    <h3>S6 — Nested DOM Structure</h3>
+    <div class="card-wrapper">
+      <article class="card">
+        <section class="card-body">
+          <button data-test="nested-confirm" id="nested-confirm">Confirm</button>
+        </section>
+      </article>
+    </div>
+  </div>
+
+  <!-- S7: Duplicate elements — same button rendered twice (e.g. sticky header + footer) -->
+  <div class="section" id="s7-duplicate">
+    <h3>S7 — Duplicate Elements</h3>
+    <div id="header-bar">
+      <button data-test="checkout-btn" class="checkout">Checkout (header)</button>
+    </div>
+    <div id="footer-bar">
+      <button data-test="checkout-btn" class="checkout" id="duplicate-target">Checkout (footer)</button>
+    </div>
+  </div>
+
+  <!-- S8: Missing data-test and id — AI must fall back to role/CSS -->
+  <div class="section" id="s8-no-attrs">
+    <h3>S8 — Missing Stable Attributes</h3>
+    <form class="subscribe-form">
+      <input type="email" name="email" placeholder="Enter email" />
+      <button type="submit" class="subscribe-btn">Subscribe</button>
+    </form>
+  </div>
+
+  <!-- S9: Input with no name/id — AI must use type or placeholder -->
+  <div class="section" id="s9-bare-input">
+    <h3>S9 — Bare Input (no id, no name, no data-test)</h3>
+    <input type="text" placeholder="Your comment" class="comment-field" />
+    <button data-test="post-comment">Post</button>
+  </div>
+
+  <!-- S10: Stale locator after DOM mutation — button id changes on click -->
+  <div class="section" id="s10-mutation">
+    <h3>S10 — DOM Mutation (id changes after interaction)</h3>
+    <button id="step-one" data-test="step-btn" onclick="mutateBtn()">Step One</button>
+    <span id="mutation-status"></span>
+  </div>
+
+  <script>
+    // S3: reveal delayed button after 2 s
+    setTimeout(() => {
+      const placeholder = document.getElementById('delayed-placeholder');
+      const btn         = document.getElementById('delayed-btn');
+      if (placeholder) placeholder.style.display = 'none';
+      if (btn)         btn.style.display = 'inline-block';
+    }, 2000);
+
+    // S10: mutate the button id when clicked
+    function mutateBtn() {
+      const btn = document.getElementById('step-one');
+      if (btn) {
+        btn.id        = 'step-two';
+        btn.innerText = 'Step Two';
+        document.getElementById('mutation-status').innerText = 'mutated!';
+      }
+    }
+  </script>
+</body>
+</html>
