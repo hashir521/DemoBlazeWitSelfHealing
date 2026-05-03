@@ -9,7 +9,7 @@ class NavbarPage extends BasePage {
     super(page);
 
     // Locators
-    this.signupLink  = page.locator('#signin2-BROKEN'); // ❌ intentionally broken for self-healing test
+    this.signupLink  = page.locator('#signin2');  // correct locator
     this.loginLink   = page.locator('#login2');
     this.homeLink    = page.locator('a.nav-link[href="index.html"]');
     this.cartLink    = page.locator('#cartur');

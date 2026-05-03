@@ -32,6 +32,8 @@ test('DemoBlaze - Signup, Login, Browse, Add to Cart and Verify Total', async ({
   await navbar.clickSignup();
 
   // ─── Step 3-7: Fill signup form and handle confirmation alert ─────────────
+  // Note: if the user already exists the alert still fires and is accepted —
+  // we just proceed to login regardless of whether signup succeeded.
   await signup.signup(USERNAME, PASSWORD);
 
   // ─── Step 8: Click Login from navbar ──────────────────────────────────────
