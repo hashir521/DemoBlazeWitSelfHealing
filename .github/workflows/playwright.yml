@@ -48,8 +48,9 @@ jobs:
 
       # 6. Run AI self-healing tests (uses Groq instead of Ollama)
       # signup_scroll.spec.js is here because it uses selfHeal (needs AI)
+      # --workers=1 prevents parallel Groq calls hitting the free tier rate limit
       - name: Run self-healing tests
-        run: npx playwright test tests/selfHealing.spec.js tests/stressHealing.spec.js tests/signup_scroll.spec.js
+        run: npx playwright test tests/selfHealing.spec.js tests/stressHealing.spec.js tests/signup_scroll.spec.js --workers=1
         env:
           CI: true
           AI_PROVIDER: groq
