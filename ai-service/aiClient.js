@@ -19,7 +19,7 @@ const { askOllama } = require('./ollamaClient');
 // ── Groq configuration ───────────────────────────────────────────────────────
 
 const GROQ_URL          = 'https://api.groq.com/openai/v1/chat/completions';
-const GROQ_DEFAULT_MODEL = 'llama3-70b-8192';
+const GROQ_DEFAULT_MODEL = 'llama-3.3-70b-versatile';
 
 /**
  * Send a prompt to the Groq cloud API and return the response text.
